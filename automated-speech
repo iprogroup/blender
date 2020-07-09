@@ -1,0 +1,80 @@
+import bpy
+import math
+
+str = "Hi.   my name is Bob.    How are you doing today.  it is a lovely weather  outside.Lets go out. "
+
+current_angle = 0
+fno=1
+locL = 0
+locR = 0
+
+
+
+for c in list(str):
+    if c == 'a':
+        angle_add = 7
+        locL=0
+        locR=0
+    elif c == 'e':
+        angle_add = 2
+        locL=0
+        locR=0
+    elif c == 'i':
+        angle_add = 5
+        locL=0
+        locR=0
+    elif c == 'o':
+        angle_add = 9
+        locL = -0.1
+        locR=0.1
+    elif c == 'u':
+        angle_add = 4
+        locL=-0.2
+        locR=0.2
+    elif c == 'y':
+        angle_add = 6
+        locL=0
+        locR=0
+    elif c == ' ':
+        angle_add = 0 
+        locL=0
+        locR=0
+    elif c == '.':
+        angle_add = 0
+        locL=0
+        locR=0           
+    else:
+        angle_add = 2
+        locL=0
+        locR=0
+                      
+        
+
+    ob = bpy.data.objects['Armature']
+    #bpy.context.scene.objects.active = ob
+    bpy.ops.object.mode_set(mode='POSE')
+
+
+    pbone = ob.pose.bones["jaw"]
+    pboneL = ob.pose.bones["SideLip.L"]
+    pboneR = ob.pose.bones["SideLip.R"]
+    # Set rotation mode to Euler XYZ, easier to understand
+    # than default quaternions
+    pbone.rotation_mode = 'XYZ'
+    # select axis in ['X','Y','Z']  <--bone local
+    axis = 'X'
+    angle = angle_add - math.degrees(current_angle)
+    
+    pbone.rotation_euler.rotate_axis(axis, math.radians(angle))
+    current_angle = pbone.rotation_euler.x
+    
+    #change the location of left lip bone
+    pboneL.location=(locL,0,0)
+    pboneR.location=(locR,0,0)
+    #bpy.ops.object.mode_set(mode='OBJECT')
+    #insert a keyframe
+    #pbone.keyframe_delete(data_path="rotation_euler" ,frame=fno)
+    pbone.keyframe_insert(data_path="rotation_euler" ,frame=fno)
+    pboneL.keyframe_insert(data_path="location", frame=fno)
+    pboneR.keyframe_insert(data_path="location", frame=fno)
+    fno += 2
